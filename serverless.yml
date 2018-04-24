@@ -1,0 +1,34 @@
+service: testApis
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: <YOUR REGION>
+
+package:
+  individually: true
+  exclude:
+    - src/**/*.spec.ts
+
+functions:
+  testAurora:
+    handler: src/testHandler.get
+    events:
+      - http:
+          path: v1/tests
+          method: get
+          cors: true
+plugins:
+  - serverless-webpack
+
+custom:
+  stage: dev
+  
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Type: 'AWS::ApiGateway::RestApi'
+      Properties:
+        Name: '${self:service}-${self:custom.stage}'
+        Description: 'Sample NodeJS APIs'
